@@ -1,4 +1,5 @@
 ﻿using TickTackToe.Api.Endpoints;
+using TickTackToe.Api.Handlers;
 
 namespace TickTacToe.Tests;
 
@@ -9,12 +10,12 @@ public class Tests {
 
     [Test] //public static bool CheckVirticalWinCondition(int row, int col, bool playerType, int winCodition, int boardSize, bool[] board) 
     public void TestVerticalWinCondition() {
-        Assert.That(GameEndpoints.CheckVerticalWinCondition(1, 1, true, 3, 3, new []{ 
+        Assert.That(GameHandler.CheckVerticalWinCondition(1, 1, true, 3, 3, new []{ 
             0, 1, 0, 
             0, 1, 0, 
             0, 1, 0 
         }));
-        Assert.That(GameEndpoints.CheckVerticalWinCondition(2, 2, true, 3, 5, new []{ 
+        Assert.That(GameHandler.CheckVerticalWinCondition(2, 2, true, 3, 5, new []{ 
             0, 0, 1, 0, 1, 
             0, 0, 0, 0, 0,
             0, 0, 1, 0, 0,
@@ -25,12 +26,12 @@ public class Tests {
 
     [Test]
     public void TestHorizontalWinCondition() {
-        Assert.That(GameEndpoints.CheckHorizontalWinCondition(1, 1, true, 3, 3, new []{ 
+        Assert.That(GameHandler.CheckHorizontalWinCondition(1, 1, true, 3, 3, new []{ 
             0, 0, 0, 
             1, 1, 1, 
             0, 0, 0 
         }));
-        Assert.That(GameEndpoints.CheckHorizontalWinCondition(2, 2, true, 4, 5, new []{ 
+        Assert.That(GameHandler.CheckHorizontalWinCondition(2, 2, true, 4, 5, new []{ 
             0, 0, 1, 0, 1, 
             0, 0, 0, 0, 0,
             1, 1, 1, 1, 0,
@@ -41,24 +42,24 @@ public class Tests {
     
     [Test]
     public void TestDiagonalWinCondition() {
-        Assert.That(GameEndpoints.CheckDiagonalWinCondition(1, 1, true, 3, 3, new []{ 
+        Assert.That(GameHandler.CheckDiagonalWinCondition(1, 1, true, 3, 3, new []{ 
             1, 0, 0, 
             0, 1, 0, 
             0, 0, 1 
         }));
-        Assert.That(GameEndpoints.CheckDiagonalWinCondition(1, 1, true, 3, 3, new []{ 
+        Assert.That(GameHandler.CheckDiagonalWinCondition(1, 1, true, 3, 3, new []{ 
             0, 0, 1, 
             0, 1, 0, 
             1, 0, 1 
         }));
-        Assert.That(GameEndpoints.CheckDiagonalWinCondition(2, 2, true, 4, 5, new []{ 
+        Assert.That(GameHandler.CheckDiagonalWinCondition(2, 2, true, 4, 5, new []{ 
             1, 0, 1, 0, 1, 
             0, 1, 0, 0, 0,
             0, 0, 1, 1, 0,
             0, 0, 0, 1, 0,
             1, 0, 1, 0, 0 
         }));
-        Assert.That(GameEndpoints.CheckDiagonalWinCondition(2, 2, true, 3, 5, new []{ 
+        Assert.That(GameHandler.CheckDiagonalWinCondition(2, 2, true, 3, 5, new []{ 
             1, 0, 1, 0, 1, 
             0, 0, 0, 1, 0,
             0, 0, 1, 1, 0,
