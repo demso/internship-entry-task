@@ -33,7 +33,7 @@ public static class GameEndpoints {
                 true, // circle
                 0,
                 newGame.BoardSize,
-                new bool[newGame.BoardSize * newGame.BoardSize],
+                new int[newGame.BoardSize * newGame.BoardSize],
                 null,
                 0,
                 newGame.WinCondition
@@ -69,24 +69,24 @@ public static class GameEndpoints {
     private static GameDto CheckWinner(int id, MoveDto move) {
         var index = games.FindIndex(game => game.Id == id);
         var game = games[index];
-        var newBoard = (bool[])game.Board.Clone();
+        var newBoard = (int[])game.Board.Clone();
         bool playerType = game.Player1Type;
         if (game.PlayerId1 == move.PlayerId) {
             playerType = game.Player1Type;
         } else {
             playerType = !game.Player1Type;
         }
-        newBoard[game.BoardSize * move.Row + move.Column] = playerType;
+        newBoard[game.BoardSize * move.Row + move.Column] = playerType ? 1 : 2;
         int winCondition = game.WinCondition;
         int boardSize = game.BoardSize;
         
-        if (GetIndexAt(,,boardSize))
-            
-        for (int row = 0; row < game.BoardSize; row++) {
-            for (int col = 0; col < game.BoardSize; col++) {
-                if (newBoard[])
-            }    
-        }
+        // if (GetIndexAt(,,boardSize))
+        //     
+        // for (int row = 0; row < game.BoardSize; row++) {
+        //     for (int col = 0; col < game.BoardSize; col++) {
+        //         if (newBoard[])
+        //     }    
+        // }
             
         games[index] = new GameDto(
             id,
@@ -105,6 +105,111 @@ public static class GameEndpoints {
     }
     
     private static int GetIndexAt(int row, int col, int boardSize) => row * boardSize + col;
+    private static bool IsInBounds(int row, int col, int boardSize) => row >= 0 && row < boardSize && col >= 0 && col < boardSize;
+
+    private static bool Incrementor(int row, int col, bool playerType, int boardSize, int[] board, int winCondition, int rStep, int cStep) {
+        int streak = 0;
+        int cStart = cStep switch {
+            > 0 => col - winCondition,
+            < 0 => col + winCondition,
+            _ => col
+        };
+        
+        int rStart = rStep switch {
+            > 0 => row - winCondition,
+            < 0 => row + winCondition,
+            _ => row
+        };
+
+        int rEnd = rStep switch {
+            > 0 => row + winCondition,
+            < 0 => row - winCondition,
+            _ => row
+        };
+
+        int cEnd = cStep switch {
+            > 0 => col + winCondition,
+            < 0 => col - winCondition,
+            _ => col
+        };
+
+        bool result = false;
+        
+        while (rStart < rEnd || cStart < cEnd) {
+            if (rStart < rEnd) rStart += rStep;
+            if (cStart < cEnd) cStart += cStep;
+            if (!IsInBounds(rStart, col, boardSize))
+                continue;
+            if (board[GetIndexAt(rStart, col, boardSize)] == (playerType ? 1 : 2)) {
+                streak++;
+                if (streak >= winCondition) {
+                    result = true;
+                    break;
+                }
+            } else {
+                streak = 0;
+            }
+        }
+        return result;
+    }
+
+    public static bool CheckVirticalWinCondition(int row, int col, bool playerType, int winCodition, int boardSize, int[] board) {
+        int streak = 0;
+        for (int r = row-winCodition; r < row+winCodition; r++) {
+            if (!IsInBounds(r, col, boardSize))
+                continue;
+            if (board[GetIndexAt(r, col, boardSize)] == (playerType ? 1 : 2)) {
+                streak++;
+                if (streak >= winCodition)
+                    return true;
+            } else {
+                streak = 0;
+            }
+        }
+        return false;
+    }
     
-    private static bool CheckVirticalWinCondition()
+    public static bool CheckHorizontalWinCondition(int row, int col, bool playerType, int winCodition, int boardSize, int[] board) {
+        int streak = 0;
+        for (int c = col-winCodition; c < col+winCodition; c++) {
+            if (!IsInBounds(row, c, boardSize))
+                continue;
+            if (board[GetIndexAt(row, c, boardSize)] == (playerType ? 1 : 2)) {
+                streak++;
+                if (streak >= winCodition)
+                    return true;
+            } else {
+                streak = 0;
+            }
+        }
+        return false;
+    }
+    
+    public static bool CheckDiagonalWinCondition(int row, int col, bool playerType, int winCodition, int boardSize, int[] board) {
+        int streak = 0;
+        for (int c = col-winCodition, r = row-winCodition; c < col+winCodition && r < row+winCodition; c++, r++) {
+            if (!IsInBounds(r, c, boardSize))
+                continue;
+            if (board[GetIndexAt(r, c, boardSize)] == (playerType ? 1 : 2)) {
+                streak++;
+                if (streak >= winCodition)
+                    return true;
+            } else {
+                streak = 0;
+            }
+        }
+        for (int c = col-winCodition, r = row+winCodition; c < col+winCodition && r >= row-winCodition; c++, r--) {
+            if (!IsInBounds(r, c, boardSize))
+                continue;
+            if (board[GetIndexAt(r, c, boardSize)] == (playerType ? 1 : 2)) {
+                streak++;
+                if (streak >= winCodition)
+                    return true;
+            } else {
+                streak = 0;
+            }
+        }
+        return false;
+        
+    }
 }
