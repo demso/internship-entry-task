@@ -2,6 +2,7 @@
 
 public record GameDto(
     int Id, 
+    int WhoseTurn, //0 - player 1, 1 - player 2
     int PlayerId1, 
     int PlayerId2, 
     bool Player1Type, //true - circle, false - cross

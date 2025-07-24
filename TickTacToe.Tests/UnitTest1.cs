@@ -9,12 +9,12 @@ public class Tests {
 
     [Test] //public static bool CheckVirticalWinCondition(int row, int col, bool playerType, int winCodition, int boardSize, bool[] board) 
     public void TestVerticalWinCondition() {
-        Assert.That(GameEndpoints.CheckVirticalWinCondition(1, 1, true, 3, 3, new []{ 
+        Assert.That(GameEndpoints.CheckVerticalWinCondition(1, 1, true, 3, 3, new []{ 
             0, 1, 0, 
             0, 1, 0, 
             0, 1, 0 
         }));
-        Assert.That(GameEndpoints.CheckVirticalWinCondition(2, 2, true, 3, 5, new []{ 
+        Assert.That(GameEndpoints.CheckVerticalWinCondition(2, 2, true, 3, 5, new []{ 
             0, 0, 1, 0, 1, 
             0, 0, 0, 0, 0,
             0, 0, 1, 0, 0,
