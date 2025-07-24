@@ -1,4 +1,5 @@
 ﻿using TickTackToe.Api.Dtos;
+using TickTackToe.Api.Enums;
 using TickTackToe.Api.Handlers;
 
 namespace TickTackToe.Api.Endpoints;
@@ -17,7 +18,7 @@ public static class GameEndpoints {
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         app.MapGet("games", () => games);
 
-        app.MapGet("games/{id}", (int id) => {
+        app.MapGet("games/{id:guid}", (Guid id) => {
                 GameDto? game = games.Find(x => x.Id == id);
                 return game is null ? Results.NotFound() : Results.Ok(game);
             })
@@ -28,16 +29,13 @@ public static class GameEndpoints {
             // if(newGame.BoardSize <= 0)
             //     return Results.BadRequest("Invalid board size");
             GameDto game = new(
-                games.Count + 1,
-                0,
-                ++PlayerCount,
-                -1,
-                true, // circle
+                Guid.NewGuid(), 
+                nameof(Player.X),
                 0,
                 newGame.BoardSize,
-                new int[newGame.BoardSize * newGame.BoardSize],
-                null,
-                0,
+                new string[newGame.BoardSize * newGame.BoardSize],
+                nameof(GameResult.None),
+                nameof(GameStatus.NotStarted),
                 newGame.WinCondition
             );
             games.Add(game);
@@ -50,25 +48,20 @@ public static class GameEndpoints {
             return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game);
         });
 
-        app.MapPut("games/{id}/join", (int id) => {
+        app.MapPut("games/{id}/join", (Guid id) => {
             var index = games.FindIndex(game => game.Id == id);
             
             if (index == -1) 
                 return Results.NotFound();
             
             var game = games[index];
-            if (game.PlayerId1 < 0) {
-                games[index] = game with { Id = id, PlayerId1 = ++PlayerCount };
-            } else if (game.PlayerId2 < 0) {
-                games[index] = game with { Id = id, PlayerId2 = ++PlayerCount };
-            }
             return Results.Ok(game);
         });
         
         return app;
     }
     
-    private static GameDto ProcessMove(int id, MoveDto move) {
+    private static GameDto ProcessMove(Guid id, MoveDto move) {
         var index = games.FindIndex(game => game.Id == id);
         var game = games[index];
         var newBoard = (int[])game.Board.Clone();
@@ -110,7 +103,7 @@ public static class GameEndpoints {
                 game.TurnNumber + 1,
                 game.BoardSize,
                 newBoard,
-                game.WinnerId,
+                game.GameResult,
                 game.State,
                 game.WinCondition
             );
