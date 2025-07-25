@@ -17,7 +17,7 @@ public static class GameEndpoints {
     //HashSet<PlayerDto> players = new HashSet<PlayerDto>();
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
-        app.MapGet("games", () => games);
+        //app.MapGet("games", () => games);
 
         app.MapGet("games/{id}", (int id) => {
                 GameDto? game = games.Find(x => x.Id == id);
@@ -27,16 +27,20 @@ public static class GameEndpoints {
 
         //POST /games
         app.MapPost("games", (CreateGameDto newGame) => {
-            // if(newGame.BoardSize <= 0)
-            //     return Results.BadRequest("Invalid board size");
+            // if(newGame.BoardSize < 3)
+            //     return Results.BadRequest("Размер поля должен быть больше 3");
+            // if(newGame.WinCondition <= 0)
+            //     return Results.BadRequest("Условие победы должно быть больше 0");
+            var newBoard = new string[newGame.BoardSize * newGame.BoardSize];
+            Array.Fill(newBoard, string.Empty);
             GameDto game = new(
                 GameCount++, 
                 nameof(Player.X),
                 0,
                 newGame.BoardSize,
-                new string[newGame.BoardSize * newGame.BoardSize],
+                newBoard,
                 nameof(GameResult.None),
-                nameof(GameStatus.NotStarted),
+                nameof(GameStatus.InProgress),
                 newGame.WinCondition
             );
             games.Add(game);
@@ -45,16 +49,6 @@ public static class GameEndpoints {
         .WithParameterValidation();
 
         app.MapPut("games/{id}/move", ProcessMove);
-
-        // app.MapPut("games/{id}/join", (int id) => {
-        //     var index = games.FindIndex(game => game.Id == id);
-        //     
-        //     if (index == -1) 
-        //         return Results.NotFound();
-        //     
-        //     var game = games[index];
-        //     return Results.Ok(game);
-        // });
         
         return app;
     }
@@ -65,13 +59,12 @@ public static class GameEndpoints {
         var newBoard = (string[])game.Board.Clone();
         var playerType = move.Player;
 
-        if (!playerType.Equals(game.WhoseTurn)) {
-            return Results.BadRequest("Не ваш ход");
-        }
         if (game.State.Equals(nameof(GameStatus.Finished))) {
             return Results.BadRequest("Игра окончена");
         }
-        
+        if (!playerType.Equals(game.WhoseTurn)) {
+            return Results.BadRequest("Не ваш ход");
+        }
         
         newBoard[game.BoardSize * move.Row + move.Column] = playerType;
         

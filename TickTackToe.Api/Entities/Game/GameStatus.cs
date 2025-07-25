@@ -1,7 +1,7 @@
 ﻿namespace TickTackToe.Api.Enums;
 
 public enum GameStatus {
-    NotStarted,
+    //NotStarted,
     InProgress,
     Finished
 }

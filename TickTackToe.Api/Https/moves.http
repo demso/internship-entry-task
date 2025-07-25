@@ -1,0 +1,21 @@
+﻿### Take move X
+PUT http://localhost:5299/games/0/move
+Content-Type: application/json
+
+{
+  "gameId": 0,
+  "player": "X",
+  "row": 2,
+  "column": 2
+}
+
+### Take move O
+PUT http://localhost:5299/games/0/move
+Content-Type: application/json
+
+{
+  "gameId": 0,
+  "player": "O",
+  "row": 2,
+  "column": 0
+}

@@ -3,6 +3,6 @@
 namespace TickTackToe.Api.Dtos;
 
 public record CreateGameDto(
-    [Range(3, int.MaxValue)] int BoardSize,
-    [Range(3, int.MaxValue)] int WinCondition
+    [Required][Range(3, int.MaxValue)] int BoardSize,
+    [Required][Range(3, int.MaxValue)] int WinCondition
 );

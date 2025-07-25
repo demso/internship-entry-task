@@ -9,6 +9,6 @@ public class Game {
     public int BoardSize { get; set; }
     public required string[] Board { get; set; }
     public GameResult GameResult { get; set; } = GameResult.None;
-    public GameStatus GameStatus { get; set; } = GameStatus.NotStarted;
+    public GameStatus GameStatus { get; set; } = GameStatus.InProgress;
     public int WinCondition { get; set; }
 }

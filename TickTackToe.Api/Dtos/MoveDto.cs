@@ -3,8 +3,8 @@
 namespace TickTackToe.Api.Dtos;
 
 public record MoveDto(
-    [Range(0, int.MaxValue)] uint GameId,
+    [Required][Range(0, int.MaxValue)] int GameId,
     [Required] string Player,
-    [Range(0, int.MaxValue)] int Row,
-    [Range(0, int.MaxValue)] int Column
+    [Required][Range(0, int.MaxValue)] int Row,
+    [Required][Range(0, int.MaxValue)] int Column
 );
