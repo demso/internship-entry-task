@@ -21,7 +21,7 @@ namespace TickTackToe.Api.Data.Migrations
                     BoardSize = table.Column<int>(type: "INTEGER", nullable: false),
                     Board = table.Column<string>(type: "TEXT", nullable: false),
                     GameResult = table.Column<int>(type: "INTEGER", nullable: false),
-                    GameStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    GameState = table.Column<int>(type: "INTEGER", nullable: false),
                     WinCondition = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

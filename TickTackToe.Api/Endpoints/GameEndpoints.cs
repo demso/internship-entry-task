@@ -1,4 +1,6 @@
-﻿using TickTackToe.Api.Dtos;
+﻿using TickTackToe.Api.Data;
+using TickTackToe.Api.Dtos;
+using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Enums;
 using TickTackToe.Api.Handlers;
 
@@ -22,20 +24,32 @@ public static class GameEndpoints {
             .WithName(GetGameEndpointName);
 
         //POST /games
-        app.MapPost("games", (CreateGameDto newGame) => {
+        app.MapPost("games", (CreateGameDto newGame, GameContext dbContext) => {
             var newBoard = new string[newGame.BoardSize * newGame.BoardSize];
             Array.Fill(newBoard, string.Empty);
-            GameDto game = new(
-                GameCount++, 
-                nameof(Player.X),
-                0,
-                newGame.BoardSize,
-                newBoard,
-                nameof(GameResult.None),
-                nameof(GameStatus.InProgress),
-                newGame.WinCondition
-            );
-            games.Add(game);
+            Game game = new() {
+                WhoseTurn = Player.X,
+                TurnNumber = 0,
+                BoardSize = newGame.BoardSize,
+                Board = newBoard,
+                GameResult = GameResult.None,
+                GameState = GameState.InProgress,
+                WinCondition = newGame.WinCondition
+            };
+                
+            dbContext.Games.Add(game);
+            dbContext.SaveChanges();
+            // GameDto game = new(
+            //     GameCount++, 
+            //     nameof(Player.X),
+            //     0,
+            //     newGame.BoardSize,
+            //     newBoard,
+            //     nameof(GameResult.None),
+            //     nameof(GameStatus.InProgress),
+            //     newGame.WinCondition
+            // );
+            //games.Add(game);
             return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game);
         })
         .WithParameterValidation();
@@ -51,7 +65,7 @@ public static class GameEndpoints {
         var newBoard = (string[])game.Board.Clone();
         var playerType = move.Player;
 
-        if (game.State.Equals(nameof(GameStatus.Finished))) {
+        if (game.State.Equals(nameof(GameState.Finished))) {
             return Results.BadRequest("Игра окончена");
         }
         if (!playerType.Equals(game.WhoseTurn)) {
@@ -74,7 +88,7 @@ public static class GameEndpoints {
                 game.BoardSize,
                 newBoard,
                 gameResult,
-                nameof(GameStatus.Finished),
+                nameof(GameState.Finished),
                 game.WinCondition
             );
         } else {
@@ -86,7 +100,7 @@ public static class GameEndpoints {
                     game.BoardSize,
                     newBoard,
                     nameof(GameResult.Draw),
-                    nameof(GameStatus.Finished),
+                    nameof(GameState.Finished),
                     game.WinCondition
                 );
                 

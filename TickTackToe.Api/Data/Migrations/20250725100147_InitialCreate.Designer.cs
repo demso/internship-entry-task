@@ -10,7 +10,7 @@ using TickTackToe.Api.Data;
 namespace TickTackToe.Api.Data.Migrations
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20250725075335_InitialCreate")]
+    [Migration("20250725100147_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace TickTackToe.Api.Data.Migrations
                     b.Property<int>("GameResult")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("GameStatus")
+                    b.Property<int>("GameState")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TurnNumber")
