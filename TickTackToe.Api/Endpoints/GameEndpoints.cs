@@ -3,6 +3,7 @@ using TickTackToe.Api.Dtos;
 using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Enums;
 using TickTackToe.Api.Handlers;
+using TickTackToe.Api.Mapping;
 
 namespace TickTackToe.Api.Endpoints;
 
@@ -17,106 +18,69 @@ public static class GameEndpoints {
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         app.MapGet("games", () => games);
 
-        app.MapGet("games/{id}", (int id) => {
-                GameDto? game = games.Find(x => x.Id == id);
-                return game is null ? Results.NotFound() : Results.Ok(game);
+        app.MapGet("games/{id}", (int id, GameContext dbContext) => {
+                Game? game = dbContext.Games.Find(id);
+                
+                return game is null ? Results.NotFound() : Results.Ok(game.ToDto());
             })
             .WithName(GetGameEndpointName);
 
         //POST /games
         app.MapPost("games", (CreateGameDto newGame, GameContext dbContext) => {
-            var newBoard = new string[newGame.BoardSize * newGame.BoardSize];
-            Array.Fill(newBoard, string.Empty);
-            Game game = new() {
-                WhoseTurn = Player.X,
-                TurnNumber = 0,
-                BoardSize = newGame.BoardSize,
-                Board = newBoard,
-                GameResult = GameResult.None,
-                GameState = GameState.InProgress,
-                WinCondition = newGame.WinCondition
-            };
+            Game game = newGame.ToEntity();
                 
             dbContext.Games.Add(game);
             dbContext.SaveChanges();
-            // GameDto game = new(
-            //     GameCount++, 
-            //     nameof(Player.X),
-            //     0,
-            //     newGame.BoardSize,
-            //     newBoard,
-            //     nameof(GameResult.None),
-            //     nameof(GameStatus.InProgress),
-            //     newGame.WinCondition
-            // );
-            //games.Add(game);
-            return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game);
+            
+            return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game.ToDto());
         })
         .WithParameterValidation();
 
-        app.MapPut("games/{id}/move", ProcessMove);
+        app.MapPut("games/{id}/move", ProcessMove)
+            .WithParameterValidation();
         
         return app;
     }
     
-    private static IResult ProcessMove(int id, MoveDto move) {
-        var index = games.FindIndex(game => game.Id == id);
-        var game = games[index];
-        var newBoard = (string[])game.Board.Clone();
-        var playerType = move.Player;
-
-        if (game.State.Equals(nameof(GameState.Finished))) {
+    private static IResult ProcessMove(int id, MoveDto move,  GameContext dbContext) {
+        Game? game = dbContext.Games.Find(id);
+        
+        if (game is null)
+            return Results.BadRequest("Нет такой игры");
+        
+        var playerTypeString = move.Player;
+        var playerType = GameMapping.StringToPlayer(playerTypeString);
+        
+        if (playerType is null)
+            return Results.BadRequest("Неверный тип игрока");
+        if (game.GameState.Equals(GameState.Finished)) 
             return Results.BadRequest("Игра окончена");
-        }
-        if (!playerType.Equals(game.WhoseTurn)) {
-            return Results.BadRequest("Не ваш ход");
-        }
+        if (!playerType.Equals(game.WhoseTurn)) 
+            return Results.BadRequest($"Не ваш ход, ходит [{game.WhoseTurn}]");
+        if (game.Board[GameHandler.GetIndexAt(move.Row, move.Column, game.BoardSize)].Trim().Length > 0)
+            return Results.BadRequest("Клетка занята");
         
-        newBoard[game.BoardSize * move.Row + move.Column] = playerType;
+        game.Board[game.BoardSize * move.Row + move.Column] = playerTypeString;
+        game.TurnNumber += 1;
+
+        Move curMove = move.ToEntity();
+        curMove.Game = game;
         
-        moves.Add(move);
+        dbContext.Moves.Add(curMove);
         
-        var winCondition = game.WinCondition;
-        var boardSize = game.BoardSize;
-        
-        if (GameHandler.CheckWinCondition(move.Row, move.Column, playerType, winCondition, boardSize, newBoard)) {
-            var gameResult = playerType.Equals(nameof(Player.X)) ? nameof(GameResult.WinX) : nameof(GameResult.WinO);
-            games[index] = new GameDto(
-                id,
-                game.WhoseTurn,
-                game.TurnNumber + 1,
-                game.BoardSize,
-                newBoard,
-                gameResult,
-                nameof(GameState.Finished),
-                game.WinCondition
-            );
+        if (GameHandler.CheckWinCondition(move.Row, move.Column, playerTypeString, game.WinCondition, game.BoardSize, game.Board)) {
+            game.GameState = GameState.Finished;
+            game.GameResult = playerType.Equals(Player.X) ? GameResult.WinX : GameResult.WinO;
+        } 
+        if (GameHandler.CheckDraw(game.Board)) {
+            game.GameState = GameState.Finished;
+            game.GameResult = GameResult.Draw;
         } else {
-            if (GameHandler.CheckDraw(newBoard)) {
-                games[index] = new GameDto(
-                    id,
-                    game.WhoseTurn,
-                    game.TurnNumber + 1,
-                    game.BoardSize,
-                    newBoard,
-                    nameof(GameResult.Draw),
-                    nameof(GameState.Finished),
-                    game.WinCondition
-                );
-                
-            }
-            var nextTurnPlayer = playerType.Equals(nameof(Player.X)) ? nameof(Player.O) : nameof(Player.X);
-            games[index] = new GameDto(
-                id,
-                nextTurnPlayer,
-                game.TurnNumber + 1,
-                game.BoardSize,
-                newBoard,
-                game.GameResult,
-                game.State,
-                game.WinCondition
-            );
+            game.WhoseTurn = playerType.Equals(Player.X) ? Player.O : Player.X;
         }
-        return Results.Ok(games[index]);
+        
+        dbContext.SaveChanges();
+    
+        return Results.Ok(game.ToDto());
     }
 }
