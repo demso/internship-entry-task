@@ -7,14 +7,10 @@ namespace TickTackToe.Api.Endpoints;
 public static class GameEndpoints {
     const string GetGameEndpointName = "GetGame";
 
-    //static int PlayerCount = 0;
     static int GameCount = 0;
-
-    //private static readonly List<int> playerIds = new List<int>();
 
     private static readonly List<GameDto> games = new List<GameDto>();
     private static readonly List<MoveDto> moves = new List<MoveDto>();
-    //HashSet<PlayerDto> players = new HashSet<PlayerDto>();
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         //app.MapGet("games", () => games);
@@ -27,10 +23,6 @@ public static class GameEndpoints {
 
         //POST /games
         app.MapPost("games", (CreateGameDto newGame) => {
-            // if(newGame.BoardSize < 3)
-            //     return Results.BadRequest("Размер поля должен быть больше 3");
-            // if(newGame.WinCondition <= 0)
-            //     return Results.BadRequest("Условие победы должно быть больше 0");
             var newBoard = new string[newGame.BoardSize * newGame.BoardSize];
             Array.Fill(newBoard, string.Empty);
             GameDto game = new(
