@@ -13,7 +13,7 @@ public static class GameEndpoints {
     private static readonly List<MoveDto> moves = new List<MoveDto>();
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
-        //app.MapGet("games", () => games);
+        app.MapGet("games", () => games);
 
         app.MapGet("games/{id}", (int id) => {
                 GameDto? game = games.Find(x => x.Id == id);

@@ -1,6 +1,6 @@
 ﻿using TickTackToe.Api.Enums;
 
-namespace TickTackToe.Api.Entities;
+namespace TickTackToe.Api.Entities.Game;
 
 public class Game {
     public int Id { get; set; }
