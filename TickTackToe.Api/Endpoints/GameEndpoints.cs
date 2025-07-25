@@ -11,7 +11,10 @@ public static class GameEndpoints {
     const string GetGameEndpointName = "GetGame";
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
+        //GET /games
         app.MapGet("games", (GameContext dbContext) => dbContext.Games);
+        
+        //GET /games/{id}
         app.MapGet("games/{id}", (int id, GameContext dbContext) => {
                 Game? game = dbContext.Games.Find(id);
                 return game is null ? Results.NotFound() : Results.Ok(game.ToDto());
@@ -29,6 +32,7 @@ public static class GameEndpoints {
         })
         .WithParameterValidation();
 
+        //PUT games/{id}/move
         app.MapPut("games/{id}/move", ProcessMove)
             .WithParameterValidation();
         
@@ -41,19 +45,18 @@ public static class GameEndpoints {
         if (game is null)
             return Results.BadRequest("Нет такой игры");
         
-        var playerTypeString = move.Player;
-        var playerType = GameMapping.StringToPlayer(playerTypeString);
+        var player = GameMapping.StringToPlayer(move.Player);
         
-        if (playerType is null)
-            return Results.BadRequest("Неверный тип игрока");
         if (game.GameState.Equals(GameState.Finished)) 
             return Results.BadRequest("Игра окончена");
-        if (!playerType.Equals(game.WhoseTurn)) 
+        if (player is null)
+            return Results.BadRequest("Неверный тип игрока");
+        if (!player.Equals(game.WhoseTurn)) 
             return Results.BadRequest($"Не ваш ход, ходит [{game.WhoseTurn}]");
         if (game.Board[move.Row][move.Column].Trim().Length > 0)
             return Results.BadRequest("Клетка занята");
         
-        game.Board[move.Row][move.Column] = playerTypeString;
+        game.Board[move.Row][move.Column] = player.ToString()!;
         game.TurnNumber += 1;
 
         Move curMove = move.ToEntity();
@@ -61,15 +64,15 @@ public static class GameEndpoints {
         
         dbContext.Moves.Add(curMove);
         
-        if (GameHandler.CheckWinCondition(move.Row, move.Column, playerTypeString, game.WinCondition, game.BoardSize, game.Board)) {
+        if (GameHandler.CheckWinCondition(move.Row, move.Column, player.ToString()!, game.WinCondition, game.BoardSize, game.Board)) {
             game.GameState = GameState.Finished;
-            game.GameResult = playerType.Equals(Player.X) ? GameResult.WinX : GameResult.WinO;
+            game.GameResult = player.Equals(Player.X) ? GameResult.WinX : GameResult.WinO;
         } 
         if (GameHandler.CheckDraw(game.Board)) {
             game.GameState = GameState.Finished;
             game.GameResult = GameResult.Draw;
         } else {
-            game.WhoseTurn = playerType.Equals(Player.X) ? Player.O : Player.X;
+            game.WhoseTurn = player.Equals(Player.X) ? Player.O : Player.X;
         }
         
         dbContext.SaveChanges();
