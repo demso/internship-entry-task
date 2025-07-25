@@ -6,8 +6,10 @@ namespace TickTackToe.Api.Mapping;
 
 public static class GameMapping {
     public static Game ToEntity(this CreateGameDto newGame) {
-        var newBoard = new string[newGame.BoardSize * newGame.BoardSize];
-        Array.Fill(newBoard, string.Empty);
+        var newBoard = new string[newGame.BoardSize][];
+        var arrLine = new string[newGame.BoardSize];
+        Array.Fill(arrLine, string.Empty);
+        Array.Fill(newBoard, arrLine);
         return new Game() {
             WhoseTurn = Player.X,
             TurnNumber = 0,

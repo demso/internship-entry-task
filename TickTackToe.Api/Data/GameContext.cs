@@ -7,4 +7,13 @@ namespace TickTackToe.Api.Data;
 public class GameContext(DbContextOptions<GameContext> options) : DbContext(options) {
     public DbSet<Game> Games => Set<Game>();
     public DbSet<Move> Moves => Set<Move>();
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new GameConfiguration());
+        // modelBuilder.ApplyConfiguration(new UserMapping());
+        
+        base.OnModelCreating(modelBuilder);
+    }
+    
 }

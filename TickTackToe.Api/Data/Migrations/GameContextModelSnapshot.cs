@@ -22,7 +22,7 @@ namespace TickTackToe.Api.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.PrimitiveCollection<string>("Board")
+                    b.Property<string>("Board")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -46,7 +46,7 @@ namespace TickTackToe.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Games");
+                    b.ToTable("Games", (string)null);
                 });
 
             modelBuilder.Entity("TickTackToe.Api.Enums.Move", b =>

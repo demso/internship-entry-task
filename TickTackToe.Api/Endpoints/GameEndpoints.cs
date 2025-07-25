@@ -10,17 +10,10 @@ namespace TickTackToe.Api.Endpoints;
 public static class GameEndpoints {
     const string GetGameEndpointName = "GetGame";
 
-    static int GameCount = 0;
-
-    private static readonly List<GameDto> games = new List<GameDto>();
-    private static readonly List<MoveDto> moves = new List<MoveDto>();
-
     public static WebApplication MapGameEndpoints(this WebApplication app) {
-        app.MapGet("games", () => games);
-
+        app.MapGet("games", (GameContext dbContext) => dbContext.Games);
         app.MapGet("games/{id}", (int id, GameContext dbContext) => {
                 Game? game = dbContext.Games.Find(id);
-                
                 return game is null ? Results.NotFound() : Results.Ok(game.ToDto());
             })
             .WithName(GetGameEndpointName);
@@ -57,10 +50,10 @@ public static class GameEndpoints {
             return Results.BadRequest("Игра окончена");
         if (!playerType.Equals(game.WhoseTurn)) 
             return Results.BadRequest($"Не ваш ход, ходит [{game.WhoseTurn}]");
-        if (game.Board[GameHandler.GetIndexAt(move.Row, move.Column, game.BoardSize)].Trim().Length > 0)
+        if (game.Board[move.Row][move.Column].Trim().Length > 0)
             return Results.BadRequest("Клетка занята");
         
-        game.Board[game.BoardSize * move.Row + move.Column] = playerTypeString;
+        game.Board[move.Row][move.Column] = playerTypeString;
         game.TurnNumber += 1;
 
         Move curMove = move.ToEntity();

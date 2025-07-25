@@ -1,5 +1,8 @@
-﻿### Get game 1
-GET http://localhost:5299/games/3
+﻿### Get games
+GET http://localhost:5299/games
+
+### Get game 1
+GET http://localhost:5299/games/1
 
 ### Create game
 POST http://localhost:5299/games
@@ -11,7 +14,7 @@ Content-Type: application/json
 }
 
 ### Take move X
-PUT http://localhost:5299/games/3/move
+PUT http://localhost:5299/games/1/move
 Content-Type: application/json
 
 {
@@ -22,7 +25,7 @@ Content-Type: application/json
 }
 
 ### Take move O
-PUT http://localhost:5299/games/3/move
+PUT http://localhost:5299/games/1/move
 Content-Type: application/json
 
 {
