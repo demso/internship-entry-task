@@ -4,5 +4,5 @@ public enum GameResult {
     None,
     Draw,
     WinX,
-    WinY
+    WinO
 }

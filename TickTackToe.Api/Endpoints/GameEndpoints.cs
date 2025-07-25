@@ -7,9 +7,10 @@ namespace TickTackToe.Api.Endpoints;
 public static class GameEndpoints {
     const string GetGameEndpointName = "GetGame";
 
-    static int PlayerCount = 0;
+    //static int PlayerCount = 0;
+    static int GameCount = 0;
 
-    private static readonly List<int> playerIds = new List<int>();
+    //private static readonly List<int> playerIds = new List<int>();
 
     private static readonly List<GameDto> games = new List<GameDto>();
     private static readonly List<MoveDto> moves = new List<MoveDto>();
@@ -18,7 +19,7 @@ public static class GameEndpoints {
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         app.MapGet("games", () => games);
 
-        app.MapGet("games/{id:guid}", (Guid id) => {
+        app.MapGet("games/{id}", (int id) => {
                 GameDto? game = games.Find(x => x.Id == id);
                 return game is null ? Results.NotFound() : Results.Ok(game);
             })
@@ -29,7 +30,7 @@ public static class GameEndpoints {
             // if(newGame.BoardSize <= 0)
             //     return Results.BadRequest("Invalid board size");
             GameDto game = new(
-                Guid.NewGuid(), 
+                GameCount++, 
                 nameof(Player.X),
                 0,
                 newGame.BoardSize,
@@ -43,35 +44,36 @@ public static class GameEndpoints {
         })
         .WithParameterValidation();
 
-        app.MapPut("games/{id}/move", (int id, MoveDto move) => { //game id
-            GameDto game = ProcessMove(id, move);
-            return Results.CreatedAtRoute(GetGameEndpointName, new { id = game.Id }, game);
-        });
+        app.MapPut("games/{id}/move", ProcessMove);
 
-        app.MapPut("games/{id}/join", (Guid id) => {
-            var index = games.FindIndex(game => game.Id == id);
-            
-            if (index == -1) 
-                return Results.NotFound();
-            
-            var game = games[index];
-            return Results.Ok(game);
-        });
+        // app.MapPut("games/{id}/join", (int id) => {
+        //     var index = games.FindIndex(game => game.Id == id);
+        //     
+        //     if (index == -1) 
+        //         return Results.NotFound();
+        //     
+        //     var game = games[index];
+        //     return Results.Ok(game);
+        // });
         
         return app;
     }
     
-    private static GameDto ProcessMove(Guid id, MoveDto move) {
+    private static IResult ProcessMove(int id, MoveDto move) {
         var index = games.FindIndex(game => game.Id == id);
         var game = games[index];
-        var newBoard = (int[])game.Board.Clone();
-        bool playerType = game.Player1Type;
-        if (game.PlayerId1 == move.PlayerId) {
-            playerType = game.Player1Type;
-        } else {
-            playerType = !game.Player1Type;
+        var newBoard = (string[])game.Board.Clone();
+        var playerType = move.Player;
+
+        if (!playerType.Equals(game.WhoseTurn)) {
+            return Results.BadRequest("Не ваш ход");
         }
-        newBoard[game.BoardSize * move.Row + move.Column] = playerType ? 1 : 2;
+        if (game.State.Equals(nameof(GameStatus.Finished))) {
+            return Results.BadRequest("Игра окончена");
+        }
+        
+        
+        newBoard[game.BoardSize * move.Row + move.Column] = playerType;
         
         moves.Add(move);
         
@@ -79,27 +81,35 @@ public static class GameEndpoints {
         var boardSize = game.BoardSize;
         
         if (GameHandler.CheckWinCondition(move.Row, move.Column, playerType, winCondition, boardSize, newBoard)) {
+            var gameResult = playerType.Equals(nameof(Player.X)) ? nameof(GameResult.WinX) : nameof(GameResult.WinO);
             games[index] = new GameDto(
                 id,
-                -1,
-                game.PlayerId1,
-                game.PlayerId2,
-                game.Player1Type,
+                game.WhoseTurn,
                 game.TurnNumber + 1,
                 game.BoardSize,
                 newBoard,
-                move.PlayerId,
-                2,
+                gameResult,
+                nameof(GameStatus.Finished),
                 game.WinCondition
             );
         } else {
-            var playerNextMove = game.PlayerId1 == move.PlayerId ? game.PlayerId2 : game.PlayerId1;
+            if (GameHandler.CheckDraw(newBoard)) {
+                games[index] = new GameDto(
+                    id,
+                    game.WhoseTurn,
+                    game.TurnNumber + 1,
+                    game.BoardSize,
+                    newBoard,
+                    nameof(GameResult.Draw),
+                    nameof(GameStatus.Finished),
+                    game.WinCondition
+                );
+                
+            }
+            var nextTurnPlayer = playerType.Equals(nameof(Player.X)) ? nameof(Player.O) : nameof(Player.X);
             games[index] = new GameDto(
                 id,
-                playerNextMove,
-                game.PlayerId1,
-                game.PlayerId2,
-                game.Player1Type,
+                nextTurnPlayer,
                 game.TurnNumber + 1,
                 game.BoardSize,
                 newBoard,
@@ -108,6 +118,6 @@ public static class GameEndpoints {
                 game.WinCondition
             );
         }
-        return game;
+        return Results.Ok(games[index]);
     }
 }
