@@ -20,7 +20,7 @@ Content-Type: application/json
 {
   "gameId": 0,
   "player": "X",
-  "row": 2,
+  "row": 1,
   "column": 2
 }
 
@@ -32,5 +32,5 @@ Content-Type: application/json
   "gameId": 0,
   "player": "O",
   "row": 2,
-  "column": 0
+  "column": 1
 }

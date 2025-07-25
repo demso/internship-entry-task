@@ -11,8 +11,6 @@ public class GameContext(DbContextOptions<GameContext> options) : DbContext(opti
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new GameConfiguration());
-        // modelBuilder.ApplyConfiguration(new UserMapping());
-        
         base.OnModelCreating(modelBuilder);
     }
     

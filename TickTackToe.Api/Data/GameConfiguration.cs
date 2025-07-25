@@ -10,9 +10,12 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
 {
     public void Configure(EntityTypeBuilder<Game> builder)
     {
-        builder.ToTable("Games").HasKey(g => g.Id);
         builder.Property(g => g.Board).HasConversion(
             v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-            v => JsonSerializer.Deserialize<string?[][]>(v, (JsonSerializerOptions?)null)!);
+            v => JsonSerializer.Deserialize<string?[][]>(v, (JsonSerializerOptions?)null)!,
+                new ValueComparer<string?[][]>(
+                    (c1, c2) => c1!.SequenceEqual(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.Select(x => x.ToArray()).ToArray()));
     }
 }
