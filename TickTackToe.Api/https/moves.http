@@ -5,33 +5,28 @@ GET http://localhost:8080/health
 GET http://localhost:8080/games
 
 ### Get game 1
-GET http://localhost:8080/games/4
+GET http://localhost:8080/games/1
 
 ### Create game
 POST http://localhost:8080/games
 Content-Type: application/json
 
-{
-  "boardSize": 20,
-  "winCondition": 10
-}
-
 ### Take move X
-PUT http://localhost:8080/games/4/move
+PUT http://localhost:8080/games/1/move
 Content-Type: application/json
 
 {
   "player": "X",
-  "row": 4,
+  "row": 0,
   "column": 1
 }
 
 ### Take move O
-PUT http://localhost:8080/games/4/move
+PUT http://localhost:8080/games/1/move
 Content-Type: application/json
 
 {
   "player": "O",
-  "row": 4,
+  "row": 2,
   "column": 0
 }

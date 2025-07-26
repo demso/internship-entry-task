@@ -1,4 +1,5 @@
 ﻿using TickTackToe.Api.Entities.Game;
+using TickTackToe.Api.Enums;
 
 namespace TickTackToe.Api.Handlers;
 
@@ -69,20 +70,19 @@ public static class GameHandler {
     public static bool CheckDraw(string[][] board) {
         return board.All(subArr => !Array.Exists(subArr, string.IsNullOrEmpty));
     }
-
-    // public static Game CreateGame(int boardSize) {
-    //     var newBoard = new string[newGame.BoardSize][];
-    //     var arrLine = new string[newGame.BoardSize];
-    //     Array.Fill(arrLine, string.Empty);
-    //     Array.Fill(newBoard, arrLine);
-    //     return new Game(int boardSize, int winCondition) {
-    //         WhoseTurn = Player.X,
-    //         TurnNumber = 0,
-    //         BoardSize = newGame.BoardSize,
-    //         Board = newBoard,
-    //         GameResult = GameResult.None,
-    //         GameState = GameState.InProgress,
-    //         WinCondition = newGame.WinCondition
-    //     };
-    // }
+    public static Game CreateGameAsync(int boardSize, int winCondition) {
+        var newBoard = new string[boardSize][];
+        var emptyBoardRow = new string[boardSize];
+        Array.Fill(emptyBoardRow, string.Empty);
+        Array.Fill(newBoard, emptyBoardRow);
+        return new Game {
+            WhoseTurn = Player.X,
+            TurnNumber = 0,
+            BoardSize = boardSize,
+            Board = newBoard,
+            GameResult = GameResult.None,
+            GameState = GameState.InProgress,
+            WinCondition = winCondition
+        };
+    }
 }
