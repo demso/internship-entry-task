@@ -1,4 +1,5 @@
 ﻿using TickTackToe.Api.Dtos;
+using TickTackToe.Api.Entities;
 using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Enums;
 
@@ -24,12 +25,12 @@ public static class GameMapping {
     public static GameDto ToDto(this Game game) {
         return new GameDto(
             game.Id,
-            game.WhoseTurn.ToString(),
+            game.WhoseTurn,
             game.TurnNumber,
             game.BoardSize,
             game.Board,
-            game.GameResult.ToString(),
-            game.GameState.ToString(),
+            game.GameResult,
+            game.GameState,
             game.WinCondition
             );
     }
@@ -42,10 +43,10 @@ public static class GameMapping {
         };
     }
 
-    public static Move ToEntity(this MoveDto moveDto) {
+    public static Move ToEntity(this MoveDto moveDto, int gameId) {
         return new Move() {
-            GameId = moveDto.GameId,
-            Player = (Player)StringToPlayer(moveDto.Player)!,
+            GameId = gameId,
+            Player = moveDto.Player,
             Row = moveDto.Row,
             Column = moveDto.Column
         };
@@ -53,8 +54,7 @@ public static class GameMapping {
     
     public static MoveDto ToDto(this Move move) {
         return new MoveDto(
-            move.GameId, 
-            move.Player.ToString(), 
+            move.Player, 
             move.Row, 
             move.Column
             );
