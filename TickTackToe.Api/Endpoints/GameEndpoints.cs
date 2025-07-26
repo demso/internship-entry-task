@@ -11,6 +11,8 @@ namespace TickTackToe.Api.Endpoints;
 
 public static class GameEndpoints {
     const string GetGameEndpointName = "GetGame";
+    
+    //TODO обработка когда пытаются получить доступ не к той игре и логгирование
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         float DIRTY_TRICK_CHANCE = int.Parse(Environment.GetEnvironmentVariable("SWITCH_CHANCE")!); // вероятность смены символа игрока на символ противника
@@ -36,8 +38,8 @@ public static class GameEndpoints {
             .WithName(GetGameEndpointName);
 
         //POST /games
-        app.MapPost("games", async (CreateGameDto newGame, GameContext dbContext) => {
-            Game game = newGame.ToEntity();
+        app.MapPost("games", async (GameContext dbContext) => {
+            Game game = GameHandler.CreateGameAsync(BOARD_SIZE, WIN_CONDITION);
                 
             dbContext.Games.Add(game);
             await dbContext.SaveChangesAsync();
@@ -59,7 +61,7 @@ public static class GameEndpoints {
                 return Results.BadRequest("Игра окончена");
             if (!player.Equals(game.WhoseTurn)) 
                 return Results.BadRequest($"Не ваш ход, ходит [{game.WhoseTurn}]");
-            if (!GameHandler.IsInBounds(move.Row, move.Column, game.BoardSize))
+            if (!GameHandler.IsInBounds(move.Row, move.Column, BOARD_SIZE))
                 return Results.BadRequest("Клетка вне поля");
             if (game.Board[move.Row][move.Column].Length > 0)
                 return Results.BadRequest("Клетка занята");
@@ -76,11 +78,6 @@ public static class GameEndpoints {
 
             game.Board[move.Row][move.Column] = player.ToString();
             game.TurnNumber += 1;
-
-            Move curMove = move.ToEntity(game.Id);
-            curMove.Game = game;
-            
-            dbContext.Moves.Add(curMove);
             
             if (GameHandler.CheckWinCondition(move.Row, move.Column, player.ToString(), game.WinCondition, game.BoardSize, game.Board)) {
                 game.GameState = GameState.Finished;
