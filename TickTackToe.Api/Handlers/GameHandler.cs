@@ -70,11 +70,15 @@ public static class GameHandler {
     public static bool CheckDraw(string[][] board) {
         return board.All(subArr => !Array.Exists(subArr, string.IsNullOrEmpty));
     }
-    public static Game CreateGameAsync(int boardSize, int winCondition) {
+    public static Game? CreateGame(int boardSize, int winCondition) {
+        if (boardSize < 3 || winCondition < 1 || winCondition > boardSize) 
+            return null;
+        
         var newBoard = new string[boardSize][];
         var emptyBoardRow = new string[boardSize];
         Array.Fill(emptyBoardRow, string.Empty);
         Array.Fill(newBoard, emptyBoardRow);
+        
         return new Game {
             WhoseTurn = Player.X,
             TurnNumber = 0,

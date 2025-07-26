@@ -14,14 +14,10 @@ public static class GameEndpoints {
     const string GetGameEndpointName = "GetGame";
     const float DIRTY_TRICK_CHANCE = 10; // вероятность смены символа игрока на символ противника
     const int TURN_COUNT = 3; // частота срабатывания вероятности (сколько ходов до смены символа)
-    
-    //TODO обработка когда пытаются получить доступ не к той игре и логгирование
-    //TODO асинхронная работа с данными с использованием токена отмены (токен отмены)
+    private static readonly int BOARD_SIZE = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); // размер поля игры
+    private static readonly int WIN_CONDITION = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); // сколько должно быть символов одного типа в ряд для победы
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
-        int BOARD_SIZE = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); // размер поля игры
-        int WIN_CONDITION = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); // сколько должно быть символов одного типа в ряд для победы
-        
         //GET /health
         app.MapGet("health", () => Results.Ok("Сервер онлайн"));
         
@@ -30,18 +26,24 @@ public static class GameEndpoints {
              Results.Ok((await rep.GetAllGamesAsync()).Select(g => g.ToDto())));
         
         //GET /games/{id}
-        app.MapGet("games/{id}",async  (int id, GameContext dbContext) => {
-                Game? game = await dbContext.Games.FindAsync(id);
+        app.MapGet("games/{id}",async  (int id, IGameRepositoryAsync rep) => {
+                Game? game = await rep.GetGameByIdAsync(id);
                 return game is null ? Results.NotFound("Данной игры нет в базе") : Results.Ok(game.ToDto());
             })
             .WithName(GetGameEndpointName);
 
         //POST /games
-        app.MapPost("games", async (GameContext dbContext, ILogger<Program> log) => {
-            Game game = GameHandler.CreateGameAsync(BOARD_SIZE, WIN_CONDITION);
-                
-            dbContext.Games.Add(game);
-            await dbContext.SaveChangesAsync();
+        app.MapPost("games", async (IGameRepositoryAsync rep, ILogger<Program> log) => {
+            Game? game = GameHandler.CreateGame(BOARD_SIZE, WIN_CONDITION);
+
+            if (game is null) {
+                string err =
+                    $"Невозможно создать игру. BOARD_SIZE должно быть >= 3, WIN_CONDITION >= 1, WIN_CONDITION <= BOARD_SIZE, а сейчас BOARD_SIZE: {BOARD_SIZE}, WIN_CONDITION: {WIN_CONDITION}";
+                log.LogError(err);
+                return Results.BadRequest(err);
+            }
+
+            await rep.AddGameAsync(game);
             
             log.LogInformation($"Игра с ID: {game.Id} создана");
             
@@ -56,8 +58,8 @@ public static class GameEndpoints {
         return app;
     }
     
-    private static async Task<IResult> ProcessMoveAwait(int id, MoveDto move,  GameContext dbContext, ILogger<Program> log) {
-        Game? game = await dbContext.Games.FindAsync(id);
+    private static async Task<IResult> ProcessMoveAwait(int id, MoveDto move,  IGameRepositoryAsync rep, ILogger<Program> log) {
+        Game? game = await rep.GetGameByIdAsync(id);
             
         if (game is null)
             return Results.BadRequest("Нет такой игры");
@@ -65,9 +67,9 @@ public static class GameEndpoints {
         var player = move.Player;
         
         if (game.GameState.Equals(GameState.Finished)) 
-            return Results.BadRequest("Игра окончена");
+            return Results.BadRequest($"Игра окончена, результат {game.GameResult}");
         if (!player.Equals(game.WhoseTurn)) 
-            return Results.BadRequest($"Не ваш ход, ходит [{game.WhoseTurn}]");
+            return Results.BadRequest($"Не ваш ход, ходит {game.WhoseTurn}");
         if (!GameHandler.IsInBounds(move.Row, move.Column, game.BoardSize))
             return Results.BadRequest("Клетка вне поля");
         if (game.Board[move.Row][move.Column].Length > 0)
@@ -98,8 +100,8 @@ public static class GameEndpoints {
         } else {
             game.WhoseTurn = player.Equals(Player.X) ? Player.O : Player.X;
         }
-        
-        await dbContext.SaveChangesAsync();
+
+        await rep.UpdateGameAsync(game);
     
         return Results.Ok(game.ToDto());
     }

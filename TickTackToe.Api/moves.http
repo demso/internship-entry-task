@@ -1,4 +1,26 @@
-﻿### Health
+﻿@gameId = 7
+
+### Take move X
+PUT http://localhost:8080/games/{{gameId}}/move
+Content-Type: application/json
+
+{
+    "player": "X",
+    "row": 0,
+    "column": 1
+}
+
+### Take move O
+PUT http://localhost:8080/games/{{gameId}}/move
+Content-Type: application/json
+
+{
+    "player": "O",
+    "row": 1,
+    "column": 1
+}
+
+### Health
 GET http://localhost:8080/health
 
 ### Get games
@@ -9,24 +31,3 @@ GET http://localhost:8080/games/1
 
 ### Create game
 POST http://localhost:8080/games
-Content-Type: application/json
-
-### Take move X
-PUT http://localhost:8080/games/1/move
-Content-Type: application/json
-
-{
-  "player": "X",
-  "row": 2,
-  "column": 1
-}
-
-### Take move O
-PUT http://localhost:8080/games/1/move
-Content-Type: application/json
-
-{
-  "player": "O",
-  "row": 2,
-  "column": 0
-}
