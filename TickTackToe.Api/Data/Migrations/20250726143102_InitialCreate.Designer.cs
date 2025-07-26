@@ -10,7 +10,7 @@ using TickTackToe.Api.Data;
 namespace TickTackToe.Api.Data.Migrations
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20250726065516_InitialCreate")]
+    [Migration("20250726143102_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

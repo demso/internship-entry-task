@@ -9,8 +9,6 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "BOARD_SIZE": "3",
-        "TURN_COUNT": "3",
-        "SWITCH_CHANCE": "10",
         "WIN_CONDITION": "3"
       }
     },

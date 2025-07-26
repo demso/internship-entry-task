@@ -1,0 +1,14 @@
+﻿services:
+  ticktacktoe.api:
+    image: ticktacktoe.api
+    build:
+      context: .
+      dockerfile: TickTackToe.Api/Dockerfile
+    env_file:
+      - game.env
+    volumes:
+      - db-data:/app
+    ports:
+      - "8080:8080"
+volumes:
+  db-data:
