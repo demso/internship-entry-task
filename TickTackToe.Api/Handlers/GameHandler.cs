@@ -1,12 +1,14 @@
-﻿namespace TickTackToe.Api.Handlers;
+﻿using TickTackToe.Api.Entities.Game;
+
+namespace TickTackToe.Api.Handlers;
 
 public static class GameHandler {
+    public static bool IsInBounds(int row, int col, int boardSize) => row >= 0 && row < boardSize && col >= 0 && col < boardSize;
     public static bool CheckWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         return CheckVerticalWinCondition(row, col, playerType, winCodition, boardSize, board)
                || CheckHorizontalWinCondition(row, col, playerType, winCodition, boardSize, board)
                || CheckDiagonalWinCondition(row, col, playerType, winCodition, boardSize, board);
     }
-    public static bool IsInBounds(int row, int col, int boardSize) => row >= 0 && row < boardSize && col >= 0 && col < boardSize;
     public static bool CheckVerticalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         int streak = 0;
         for (int r = row-winCodition; r < row+winCodition; r++) {
@@ -37,7 +39,6 @@ public static class GameHandler {
         }
         return false;
     }
-
     public static bool CheckDiagonalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         int streak = 0;
         for (int c = col-winCodition, r = row-winCodition; c < col+winCodition && r < row+winCodition; c++, r++) {
@@ -65,8 +66,23 @@ public static class GameHandler {
         return false;
         
     }
-
     public static bool CheckDraw(string[][] board) {
         return board.All(subArr => !Array.Exists(subArr, string.IsNullOrEmpty));
     }
+
+    // public static Game CreateGame(int boardSize) {
+    //     var newBoard = new string[newGame.BoardSize][];
+    //     var arrLine = new string[newGame.BoardSize];
+    //     Array.Fill(arrLine, string.Empty);
+    //     Array.Fill(newBoard, arrLine);
+    //     return new Game(int boardSize, int winCondition) {
+    //         WhoseTurn = Player.X,
+    //         TurnNumber = 0,
+    //         BoardSize = newGame.BoardSize,
+    //         Board = newBoard,
+    //         GameResult = GameResult.None,
+    //         GameState = GameState.InProgress,
+    //         WinCondition = newGame.WinCondition
+    //     };
+    // }
 }
