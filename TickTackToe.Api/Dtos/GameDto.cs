@@ -6,7 +6,7 @@ namespace TickTackToe.Api.Dtos;
 
 public record GameDto(
     int Id, 
-    Player WhoseTurn, //"O" or "X"
+    Player WhoseTurn, 
     int TurnNumber, 
     [Required] string[][] Board,
     GameResult GameResult,

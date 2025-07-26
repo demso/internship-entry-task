@@ -98,7 +98,7 @@ public static class GameEndpoints {
             game.GameResult = GameResult.Draw;
             log.LogInformation("Ничья!");
         } else {
-            game.WhoseTurn = player.Equals(Player.X) ? Player.O : Player.X;
+            game.WhoseTurn = game.WhoseTurn.Equals(Player.X) ? Player.O : Player.X;
         }
 
         await rep.UpdateGameAsync(game);

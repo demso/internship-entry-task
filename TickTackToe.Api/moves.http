@@ -1,13 +1,13 @@
-﻿@gameId = 7
-
+﻿@gameId = 1
+//["X", "X", ""], ["O", "X", ""], ["O", "O", ""]
 ### Take move X
 PUT http://localhost:8080/games/{{gameId}}/move
 Content-Type: application/json
 
 {
     "player": "X",
-    "row": 0,
-    "column": 1
+    "row": 2,
+    "column": 0
 }
 
 ### Take move O
@@ -16,9 +16,12 @@ Content-Type: application/json
 
 {
     "player": "O",
-    "row": 1,
+    "row": 2,
     "column": 1
 }
+
+### Create game
+POST http://localhost:8080/games
 
 ### Health
 GET http://localhost:8080/health
@@ -27,7 +30,5 @@ GET http://localhost:8080/health
 GET http://localhost:8080/games
 
 ### Get game 1
-GET http://localhost:8080/games/1
+GET http://localhost:8080/games/7
 
-### Create game
-POST http://localhost:8080/games
