@@ -11,8 +11,6 @@ namespace TickTackToe.Tests;
 
 public class GameRepositoryTests {
     private readonly IGameService _gameService;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IServiceScope _scope;
     private readonly GameContext _dbContext;
     private readonly IGameRepositoryAsync _gameRepository;
 
@@ -25,11 +23,11 @@ public class GameRepositoryTests {
         services.AddScoped<IGameRepositoryAsync, GameRepositoryAsync>();
         services.AddScoped<IGameService, GameService>();
         
-        _serviceProvider = services.BuildServiceProvider();
-        _scope = _serviceProvider.CreateScope();
-        _dbContext = _scope.ServiceProvider.GetRequiredService<GameContext>();
-        _gameService = _scope.ServiceProvider.GetRequiredService<IGameService>();
-        _gameRepository = _scope.ServiceProvider.GetRequiredService<IGameRepositoryAsync>();
+        IServiceProvider serviceProvider = services.BuildServiceProvider();
+        var scope = serviceProvider.CreateScope();
+        _dbContext = scope.ServiceProvider.GetRequiredService<GameContext>();
+        _gameService = scope.ServiceProvider.GetRequiredService<IGameService>();
+        _gameRepository = scope.ServiceProvider.GetRequiredService<IGameRepositoryAsync>();
     }
     
     [Fact]
@@ -39,7 +37,7 @@ public class GameRepositoryTests {
         var game = _gameService.CreateGame(3, 3);
         
         // Act
-        await _gameRepository.AddGameAsync(game);
+        await _gameRepository.AddGameAsync(game!);
         
         // Assert
         var savedGame = await _dbContext.Games.FindAsync(1);
@@ -56,8 +54,8 @@ public class GameRepositoryTests {
     {
         // Arrange
         var game = _gameService.CreateGame(4, 4);
-        await _gameRepository.AddGameAsync(game);
-        game.Board[1][1] = Player.X.ToString();
+        await _gameRepository.AddGameAsync(game!);
+        game!.Board[1][1] = Player.X.ToString();
     
         // Act 
         await _gameRepository.UpdateGameAsync(game);
@@ -65,7 +63,7 @@ public class GameRepositoryTests {
         // Assert
         var updatedGame = await _dbContext.Games.FindAsync(game.Id);
         
-        Assert.Equal(Player.X.ToString(), updatedGame.Board[1][1]);
+        Assert.Equal(Player.X.ToString(), updatedGame!.Board[1][1]);
         Assert.Equal(4, updatedGame.WinCondition);
         Assert.Equal(4, updatedGame.BoardSize);
     }
@@ -75,9 +73,9 @@ public class GameRepositoryTests {
         
         // Arrange
         var game = _gameService.CreateGame(5, 5);
-        await _gameRepository.AddGameAsync(game);
+        await _gameRepository.AddGameAsync(game!);
         game = _gameService.CreateGame(6, 6);
-        await _gameRepository.AddGameAsync(game);
+        await _gameRepository.AddGameAsync(game!);
         
         // Act
         var games = await _gameRepository.GetAllGamesAsync();
