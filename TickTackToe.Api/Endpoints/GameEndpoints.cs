@@ -9,11 +9,15 @@ using TickTackToe.Api.Services;
 namespace TickTackToe.Api.Endpoints;
 
 public static class GameEndpoints {
+    // вероятность смены символа игрока на символ противника
+    private const float DirtyTrickChance = 10; 
+    // частота срабатывания вероятности (сколько ходов до смены символа)
+    private const int TurnCount = 3; 
+    // размер поля игры
+    private static readonly int BoardSize = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); 
+    // сколько должно быть символов одного типа в ряд для победы
+    private static readonly int WinCondition = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); 
     private const string GetGameEndpointName = "GetGame";
-    private const float DirtyTrickChance = 10; // вероятность смены символа игрока на символ противника
-    private const int TurnCount = 3; // частота срабатывания вероятности (сколько ходов до смены символа)
-    private static readonly int BoardSize = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); // размер поля игры
-    private static readonly int WinCondition = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); // сколько должно быть символов одного типа в ряд для победы
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         //GET /health
