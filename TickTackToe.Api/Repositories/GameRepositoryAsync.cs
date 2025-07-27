@@ -2,7 +2,6 @@
 using TickTackToe.Api.Data;
 using TickTackToe.Api.Dtos;
 using TickTackToe.Api.Entities.Game;
-using TickTackToe.Api.Handlers;
 using TickTackToe.Api.Interfaces;
 using TickTackToe.Api.Mapping;
 

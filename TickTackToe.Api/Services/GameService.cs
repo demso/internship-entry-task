@@ -1,9 +1,9 @@
 ﻿using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Enums;
 
-namespace TickTackToe.Api.Handlers;
+namespace TickTackToe.Api.Services;
 
-public static class GameHandler {
+public static class GameService {
     public static bool IsInBounds(int row, int col, int boardSize) => row >= 0 && row < boardSize && col >= 0 && col < boardSize;
     //проверка является ли точка частью выигрышной комбинации
     public static bool CheckWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
