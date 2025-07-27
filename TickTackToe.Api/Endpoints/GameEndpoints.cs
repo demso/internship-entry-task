@@ -9,11 +9,11 @@ using TickTackToe.Api.Services;
 namespace TickTackToe.Api.Endpoints;
 
 public static class GameEndpoints {
-    const string GetGameEndpointName = "GetGame";
-    const float DIRTY_TRICK_CHANCE = 10; // вероятность смены символа игрока на символ противника
-    const int TURN_COUNT = 3; // частота срабатывания вероятности (сколько ходов до смены символа)
-    private static readonly int BOARD_SIZE = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); // размер поля игры
-    private static readonly int WIN_CONDITION = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); // сколько должно быть символов одного типа в ряд для победы
+    private const string GetGameEndpointName = "GetGame";
+    private const float DirtyTrickChance = 10; // вероятность смены символа игрока на символ противника
+    private const int TurnCount = 3; // частота срабатывания вероятности (сколько ходов до смены символа)
+    private static readonly int BoardSize = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); // размер поля игры
+    private static readonly int WinCondition = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); // сколько должно быть символов одного типа в ряд для победы
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
         //GET /health
@@ -32,11 +32,11 @@ public static class GameEndpoints {
 
         //POST /games
         app.MapPost("games", async (IGameRepositoryAsync rep, ILogger<Program> log) => {
-            Game? game = GameService.CreateGame(BOARD_SIZE, WIN_CONDITION);
+            Game? game = GameService.CreateGame(BoardSize, WinCondition);
 
             if (game is null) {
                 string err =
-                    $"Невозможно создать игру. BOARD_SIZE должно быть >= 3, WIN_CONDITION >= 1, WIN_CONDITION <= BOARD_SIZE, а сейчас BOARD_SIZE: {BOARD_SIZE}, WIN_CONDITION: {WIN_CONDITION}";
+                    $"Невозможно создать игру. BOARD_SIZE должно быть >= 3, WIN_CONDITION >= 1, WIN_CONDITION <= BOARD_SIZE, а сейчас BOARD_SIZE: {BoardSize}, WIN_CONDITION: {WinCondition}";
                 log.LogError(err);
                 return Results.BadRequest(err);
             }
@@ -87,8 +87,8 @@ public static class GameEndpoints {
 
         log.LogInformation($"{player} сделал ход на {move.Row}, {move.Column}");
         
-        if (game.TurnNumber > 0 && game.TurnNumber % TURN_COUNT == 0) {
-            var trickTest = new Random().NextSingle() <= DIRTY_TRICK_CHANCE / 100f;
+        if (game.TurnNumber > 0 && game.TurnNumber % TurnCount == 0) {
+            var trickTest = new Random().NextSingle() <= DirtyTrickChance / 100f;
             if (trickTest) {
                 player = player.Equals(Player.X) ? Player.O : Player.X;
                 log.LogWarning($"Символ игрока изменен на противоположный: {player}");
