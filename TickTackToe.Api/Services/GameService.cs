@@ -82,9 +82,13 @@ public class GameService : IGameService {
             return null;
         
         var newBoard = new string[boardSize][];
-        var emptyBoardRow = new string[boardSize];
-        Array.Fill(emptyBoardRow, string.Empty);
-        Array.Fill(newBoard, emptyBoardRow);
+
+        for (var i = 0; i < boardSize; i++) {
+            newBoard[i] = new string[boardSize];
+            for (var j = 0; j < boardSize; j++) {
+                newBoard[i][j] = string.Empty;
+            }
+        }
         
         return new Game {
             WhoseTurn = Player.X,
