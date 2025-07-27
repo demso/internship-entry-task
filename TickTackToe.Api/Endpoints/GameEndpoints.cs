@@ -40,7 +40,8 @@ public static class GameEndpoints {
 
             if (game is null) {
                 string err =
-                    $"Невозможно создать игру. BOARD_SIZE должно быть >= 3, WIN_CONDITION >= 1, WIN_CONDITION <= BOARD_SIZE, а сейчас BOARD_SIZE: {BoardSize}, WIN_CONDITION: {WinCondition}";
+                    $"Невозможно создать игру. BOARD_SIZE должно быть >= 3, WIN_CONDITION >= 1, WIN_CONDITION <= BOARD_SIZE," +
+                    $" а сейчас BOARD_SIZE: {BoardSize}, WIN_CONDITION: {WinCondition}.";
                 log.LogError(err);
                 return Results.BadRequest(err);
             }
@@ -63,21 +64,23 @@ public static class GameEndpoints {
     private static async Task<IResult> ProcessMoveAwait(HttpResponse response, [FromHeader(Name = "If-Match")] string? ifMatchHeader, 
             int id, MoveDto move,  IGameRepositoryAsync rep, ILogger<Program> log) {
         Game? game = await rep.GetGameByIdAsync(id);
-            
-        if (game is null)
-            return Results.BadRequest("Нет такой игры");
-        
+
+        if (game is null) {
+            var err = $"Нет игры с ID {id}";
+            log.LogInformation(err);
+            return Results.BadRequest(err);
+        }
+
         var currentETag = ETagService.GenerateETag(game);
-        
-        if (ifMatchHeader != null && ifMatchHeader != currentETag)
-        {
-            log.LogError("Etag не совпадает");
+
+        if (ifMatchHeader != null && ifMatchHeader != currentETag) {
+            log.LogError($"Невозможно обработать ход (ID игры {id}): ETag игрока {move.Player} не актуален.");
             return Results.Json(
-                data: "Необходимо обновить состояние игры у клиента.",
+                data: "Необходимо обновить состояние игры у клиента (неактуальный ETag).",
                 statusCode: StatusCodes.Status412PreconditionFailed
             );
         }
-        
+
         var player = move.Player;
         
         if (game.GameState.Equals(GameState.Finished)) 
@@ -87,15 +90,15 @@ public static class GameEndpoints {
         if (!GameService.IsInBounds(move.Row, move.Column, game.BoardSize))
             return Results.BadRequest("Клетка вне поля");
         if (game.Board[move.Row][move.Column].Length > 0)
-            return Results.BadRequest("Клетка занята");
+            return Results.Conflict("Клетка занята");
 
-        log.LogInformation($"{player} сделал ход на {move.Row}, {move.Column}");
+        log.LogInformation($"{player} сделал ход на {move.Row}, {move.Column}.");
         
         if (game.TurnNumber > 0 && game.TurnNumber % TurnCount == 0) {
             var trickTest = new Random().NextSingle() <= DirtyTrickChance / 100f;
             if (trickTest) {
                 player = player.Equals(Player.X) ? Player.O : Player.X;
-                log.LogWarning($"Символ игрока изменен на противоположный: {player}");
+                log.LogWarning($"Символ игрока изменен на противоположный: {player}.");
             }
         }
 
