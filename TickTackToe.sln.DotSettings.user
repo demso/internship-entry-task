@@ -1,10 +1,10 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AAssert_002Ecs_002Fl_003AC_0021_003FUsers_003F_0414_043C_0438_0442_0440_0438_0439_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E1_003Fresharper_002Dhost_003FSourcesCache_003F98514e314f1feddb3082dbe8507ecec1a81b6491c0db7dc53c2e8c13949e4360_003FAssert_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a5d23f9c_002D6b10_002D48ca_002Dae3a_002D4294783f5b4e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestDiagonalWinCondition" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::868BAE3E-A959-47E0-B6CC-57C8E83D0CA3::net9.0::TickTackToe.Tests.GameLogicTests.CreateNewGame_ReturnsValidGame&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::868BAE3E-A959-47E0-B6CC-57C8E83D0CA3::net9.0::TickTackToe.Tests.GameLogicTests.MakeMove_ValidMove_UpdatesGameState&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::868BAE3E-A959-47E0-B6CC-57C8E83D0CA3::net9.0::TickTackToe.Tests.GameLogicTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=af60cdff_002D532c_002D4348_002Da81f_002D959ef8ca2235/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
