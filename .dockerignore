@@ -21,8 +21,8 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
-**/Game.db
-**/Game.db-shm
-**/Game.db-wal
+**/*.db
+**/*.db-shm
+**/*.db-wal
 LICENSE
 README.md
