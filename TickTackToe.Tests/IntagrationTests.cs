@@ -2,17 +2,15 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
-using TickTackToe.Api;
 
 namespace TickTackToe.Tests;
-
 
 public class BasicIntegrationTests(WebApplicationFactory<Program> factory)
     : IClassFixture<WebApplicationFactory<Program>> {
     private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
-    public async Task Get_EndpointReturnsSuccessAndCorrectContentType()
+    public async Task EndpointsExistTest()
     {
         // Arrange
         var line = "{\n    \"player\": \"X\",\n    \"row\": 1,\n    \"column\": 0\n}";

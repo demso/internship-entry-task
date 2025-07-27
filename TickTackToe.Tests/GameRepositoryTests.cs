@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using TickTackToe.Api.Data;
 using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Enums;

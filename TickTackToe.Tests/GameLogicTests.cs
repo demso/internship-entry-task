@@ -5,21 +5,11 @@ using TickTackToe.Api.Services;
 
 namespace TickTackToe.Tests;
 
-// [Fact] // Обычный тест
-// [Trait("Category", "Integration")] // Категоризация
-// [Theory] // Параметризованный тест
-// [InlineData(1, 2, 3)] 
-// [MemberData(nameof(TestData))] // Данные из метода
-// [ClassData(typeof(TestDataClass))] // Данные из класса
-// [Fact(Timeout = 1000)] // Таймаут
-// [Fact(Skip = "Reason")] // Пропуск теста
-
 public class GameLogicTests {
     private readonly IGameService _gameService = new GameService();
     
     [Fact]
-    public void CreateGame_ReturnsValidGame()
-    {
+    public void CreateGame_ReturnsValidGame() {
         // Arrange
         var game = _gameService.CreateGame(3,3);
     
@@ -38,8 +28,7 @@ public class GameLogicTests {
         Assert.All(game.Board, row => Assert.All(row, cell => Assert.Equal("", cell))); 
     }
     [Fact]
-    public void CheckWinCondition_ValidMove_NoWin()
-    {
+    public void CheckWinCondition_ValidMove_NoWin() {
         // Arrange
         var game = _gameService.CreateGame(3, 3);
         var row = 1;
@@ -54,8 +43,7 @@ public class GameLogicTests {
         Assert.False(_gameService.CheckDraw(game.Board));
     }
     [Fact]
-    public void CheckWinCondition_Win()
-    {
+    public void CheckWinCondition_Win() {
         // Assert
         Assert.True(CheckAllWinCondition(3, new string[][]{ 
             ["", "X", ""], 
@@ -177,7 +165,7 @@ public class GameLogicTests {
         }));
     }
     
-    //проверить есть ли выигрышная комбинация в какой-либо клетке игры
+    //проверяет, есть ли выигрышная комбинация в какой-либо клетке игры
     private bool CheckAllWinCondition(int winCondition, string[][] board) {
         for (var row = 0; row < board.Length; row++) {
             for (var column = 0; column < board.Length; column++) {
