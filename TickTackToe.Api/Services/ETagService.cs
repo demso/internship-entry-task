@@ -1,12 +1,13 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using TickTackToe.Api.Entities.Game;
+using TickTackToe.Api.Interfaces;
 
 namespace TickTackToe.Api.Services;
 
-internal static class ETagService
+internal class ETagService : IETagService
 {
-    public static string GenerateETag(Game game)
+    public string GenerateETag(Game game)
     {
         var content = $"{game.Id}{game.Board}";
         var bytes = Encoding.UTF8.GetBytes(content);

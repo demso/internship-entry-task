@@ -18,4 +18,8 @@
         <Using Include="Xunit"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TickTackToe.Api\TickTackToe.Api.csproj" />
+    </ItemGroup>
+
 </Project>

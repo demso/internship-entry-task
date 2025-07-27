@@ -1,18 +1,19 @@
 ﻿using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Enums;
+using TickTackToe.Api.Interfaces;
 
 namespace TickTackToe.Api.Services;
 
-public static class GameService {
-    public static bool IsInBounds(int row, int col, int boardSize) => row >= 0 && row < boardSize && col >= 0 && col < boardSize;
+public class GameService : IGameService {
+    public bool IsInBounds(int row, int col, int boardSize) => row >= 0 && row < boardSize && col >= 0 && col < boardSize;
     //проверка является ли точка частью выигрышной комбинации
-    public static bool CheckWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
+    public bool CheckWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         return CheckVerticalWinCondition(row, col, playerType, winCodition, boardSize, board)
                || CheckHorizontalWinCondition(row, col, playerType, winCodition, boardSize, board)
                || CheckDiagonalWinCondition(row, col, playerType, winCodition, boardSize, board);
     }
     //проверка является ли точка частью выигрышной комбинации в вертикальном направлении
-    public static bool CheckVerticalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
+    public bool CheckVerticalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         int streak = 0;
         for (int r = row-winCodition; r < row+winCodition; r++) {
             if (!IsInBounds(r, col, boardSize))
@@ -28,7 +29,7 @@ public static class GameService {
         return false;
     }
     //проверка является ли точка частью выигрышной комбинации в горизонтальном направлении
-    public static bool CheckHorizontalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
+    public bool CheckHorizontalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         int streak = 0;
         for (int c = col-winCodition; c < col+winCodition; c++) {
             if (!IsInBounds(row, c, boardSize))
@@ -44,7 +45,7 @@ public static class GameService {
         return false;
     }
     //проверка является ли точка частью выигрышной комбинации в диагональном напралении
-    public static bool CheckDiagonalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
+    public bool CheckDiagonalWinCondition(int row, int col, string playerType, int winCodition, int boardSize, string[][] board) {
         int streak = 0;
         for (int c = col-winCodition, r = row-winCodition; c < col+winCodition && r < row+winCodition; c++, r++) {
             if (!IsInBounds(r, c, boardSize))
@@ -73,10 +74,10 @@ public static class GameService {
         return false;
         
     }
-    public static bool CheckDraw(string[][] board) {
+    public bool CheckDraw(string[][] board) {
         return board.All(subArr => !Array.Exists(subArr, string.IsNullOrEmpty));
     }
-    public static Game? CreateGame(int boardSize, int winCondition) {
+    public Game? CreateGame(int boardSize, int winCondition) {
         if (boardSize < 3 || winCondition < 1 || winCondition > boardSize) 
             return null;
         

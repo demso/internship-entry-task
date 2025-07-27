@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
     "player": "X",
-    "row": 2,
+    "row": 1,
     "column": 0
 }
 
@@ -17,7 +17,7 @@ Content-Type: application/json
 {
     "player": "O",
     "row": 2,
-    "column": 1
+    "column": 2
 }
 
 ### Create game

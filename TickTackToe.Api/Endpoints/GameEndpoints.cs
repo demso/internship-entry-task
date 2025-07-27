@@ -17,6 +17,7 @@ public static class GameEndpoints {
     private static readonly int BoardSize = int.Parse(Environment.GetEnvironmentVariable("BOARD_SIZE")!); 
     // сколько должно быть символов одного типа в ряд для победы
     private static readonly int WinCondition = int.Parse(Environment.GetEnvironmentVariable("WIN_CONDITION")!); 
+    
     private const string GetGameEndpointName = "GetGame";
 
     public static WebApplication MapGameEndpoints(this WebApplication app) {
@@ -35,8 +36,8 @@ public static class GameEndpoints {
             .WithName(GetGameEndpointName);
 
         //POST /games
-        app.MapPost("games", async (IGameRepositoryAsync rep, ILogger<Program> log) => {
-            Game? game = GameService.CreateGame(BoardSize, WinCondition);
+        app.MapPost("games", async (IGameRepositoryAsync rep, IGameService gameService, ILogger<Program> log) => {
+            Game? game = gameService.CreateGame(BoardSize, WinCondition);
 
             if (game is null) {
                 string err =
@@ -62,7 +63,7 @@ public static class GameEndpoints {
     }
     
     private static async Task<IResult> ProcessMoveAwait(HttpResponse response, [FromHeader(Name = "If-Match")] string? ifMatchHeader, 
-            int id, MoveDto move,  IGameRepositoryAsync rep, ILogger<Program> log) {
+            int id, MoveDto move,  IGameRepositoryAsync rep, IETagService eTagService, IGameService gameService, ILogger<Program> log) {
         Game? game = await rep.GetGameByIdAsync(id);
 
         if (game is null) {
@@ -71,7 +72,7 @@ public static class GameEndpoints {
             return Results.BadRequest(err);
         }
 
-        var currentETag = ETagService.GenerateETag(game);
+        var currentETag = eTagService.GenerateETag(game);
 
         if (ifMatchHeader != null && ifMatchHeader != currentETag) {
             log.LogError($"Невозможно обработать ход (ID игры {id}): ETag игрока {move.Player} не актуален.");
@@ -87,7 +88,7 @@ public static class GameEndpoints {
             return Results.BadRequest($"Игра окончена, результат {game.GameResult}");
         if (!player.Equals(game.WhoseTurn)) 
             return Results.BadRequest($"Не ваш ход, ходит {game.WhoseTurn}");
-        if (!GameService.IsInBounds(move.Row, move.Column, game.BoardSize))
+        if (!gameService.IsInBounds(move.Row, move.Column, game.BoardSize))
             return Results.BadRequest("Клетка вне поля");
         if (game.Board[move.Row][move.Column].Length > 0)
             return Results.Conflict("Клетка занята");
@@ -105,12 +106,12 @@ public static class GameEndpoints {
         game.Board[move.Row][move.Column] = player.ToString();
         game.TurnNumber += 1;
         
-        if (GameService.CheckWinCondition(move.Row, move.Column, player.ToString(), game.WinCondition, game.BoardSize, game.Board)) {
+        if (gameService.CheckWinCondition(move.Row, move.Column, player.ToString(), game.WinCondition, game.BoardSize, game.Board)) {
             game.GameState = GameState.Finished;
             game.GameResult = player.Equals(Player.X) ? GameResult.WinX : GameResult.WinO;
             log.LogInformation($"{player} выйграли!");
         } 
-        if (GameService.CheckDraw(game.Board)) {
+        if (gameService.CheckDraw(game.Board)) {
             game.GameState = GameState.Finished;
             game.GameResult = GameResult.Draw;
             log.LogInformation("Ничья!");
@@ -120,7 +121,7 @@ public static class GameEndpoints {
 
         await rep.UpdateGameAsync(game);
         
-        response.Headers.ETag = ETagService.GenerateETag(game);
+        response.Headers.ETag = eTagService.GenerateETag(game);
     
         return Results.Ok(game.ToDto());
     }
