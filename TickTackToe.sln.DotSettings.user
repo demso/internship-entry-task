@@ -3,10 +3,8 @@
 	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a5d23f9c_002D6b10_002D48ca_002Dae3a_002D4294783f5b4e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestDiagonalWinCondition" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::6F9B4AAE-F92B-4195-8E83-6CDF39F590A4::net9.0::TickTacToe.Tests.Test.TestVerticalWinCondition&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::6F9B4AAE-F92B-4195-8E83-6CDF39F590A4::net9.0::TickTacToe.Tests.Test.TestDiagonalWinCondition&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::6F9B4AAE-F92B-4195-8E83-6CDF39F590A4::net9.0::TickTacToe.Tests.Test.TestHorizontalWinCondition&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::6F9B4AAE-F92B-4195-8E83-6CDF39F590A4::net9.0::TickTacToe.Tests.Test.StrangeTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::868BAE3E-A959-47E0-B6CC-57C8E83D0CA3::net9.0::TickTackToe.Tests.GameLogicTests.CreateNewGame_ReturnsValidGame&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::868BAE3E-A959-47E0-B6CC-57C8E83D0CA3::net9.0::TickTackToe.Tests.GameLogicTests.MakeMove_ValidMove_UpdatesGameState&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=af60cdff_002D532c_002D4348_002Da81f_002D959ef8ca2235/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Test1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
