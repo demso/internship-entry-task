@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TickTackToe.Api.Data;
-using TickTackToe.Api.Dtos;
 using TickTackToe.Api.Entities.Game;
 using TickTackToe.Api.Interfaces;
-using TickTackToe.Api.Mapping;
 
 namespace TickTackToe.Api.Repositories;
 

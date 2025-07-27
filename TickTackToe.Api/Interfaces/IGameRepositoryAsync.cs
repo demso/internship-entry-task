@@ -1,5 +1,4 @@
-﻿using TickTackToe.Api.Dtos;
-using TickTackToe.Api.Entities.Game;
+﻿using TickTackToe.Api.Entities.Game;
 
 namespace TickTackToe.Api.Interfaces;
 

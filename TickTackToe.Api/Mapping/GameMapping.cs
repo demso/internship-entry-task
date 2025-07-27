@@ -1,7 +1,5 @@
 ﻿using TickTackToe.Api.Dtos;
-using TickTackToe.Api.Entities;
 using TickTackToe.Api.Entities.Game;
-using TickTackToe.Api.Enums;
 
 namespace TickTackToe.Api.Mapping;
 
