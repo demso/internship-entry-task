@@ -5,7 +5,7 @@ using TickTackToe.Api.Interfaces;
 
 namespace TickTackToe.Api.Repositories;
 
-class GameRepositoryAsync(GameContext dbContext, ILogger<Program> log) : IGameRepositoryAsync{
+public class GameRepositoryAsync(GameContext dbContext) : IGameRepositoryAsync{
     public async Task<Game?> GetGameByIdAsync(int id) {
         return await dbContext.Games.FindAsync(id);
     }

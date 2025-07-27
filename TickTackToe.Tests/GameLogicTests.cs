@@ -14,10 +14,7 @@ namespace TickTackToe.Tests;
 // [Fact(Timeout = 1000)] // Таймаут
 // [Fact(Skip = "Reason")] // Пропуск теста
 
-
-
 public class GameLogicTests {
-    
     private readonly IGameService _gameService = new GameService();
     
     [Fact]
@@ -181,7 +178,7 @@ public class GameLogicTests {
     }
     
     //проверить есть ли выигрышная комбинация в какой-либо клетке игры
-    bool CheckAllWinCondition(int winCondition, string[][] board) {
+    private bool CheckAllWinCondition(int winCondition, string[][] board) {
         for (var row = 0; row < board.Length; row++) {
             for (var column = 0; column < board.Length; column++) {
                 if (_gameService.CheckWinCondition(row, column, Player.X.ToString(), winCondition, board.Length, board))
