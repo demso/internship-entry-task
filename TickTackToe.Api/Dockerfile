@@ -19,7 +19,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-COPY ./TickTackToe.API/appsettings.json /app/appsettings.json
-COPY ./TickTackToe.API/appsettings.Development.json /app/appsettings.Development.json
+COPY /TickTackToe.Api/appsettings.json /app/appsettings.json
+COPY /TickTackToe.Api/appsettings.Development.json /app/appsettings.Development.json
 
 ENTRYPOINT ["dotnet", "TickTackToe.Api.dll"]

@@ -1,6 +1,6 @@
 ﻿services:
   ticktacktoe.api:
-    image: ticktacktoe.api
+    image: lithiumkgp/ticktacktoe.api:latest
     build:
       context: .
       dockerfile: TickTackToe.Api/Dockerfile
