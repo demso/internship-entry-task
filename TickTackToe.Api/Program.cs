@@ -24,3 +24,5 @@ app.MapGameEndpoints();
 await app.MigrateDbAsync();
 
 app.Run();
+
+public partial class Program {}

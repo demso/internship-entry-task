@@ -7,16 +7,9 @@ using TickTackToe.Api;
 namespace TickTackToe.Tests;
 
 
-public class BasicIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
-{
-    private readonly WebApplicationFactory<Program> _factory;
-    private readonly HttpClient _client;
-
-    public BasicIntegrationTests(WebApplicationFactory<Program> factory)
-    {
-        _factory = factory;
-        _client = factory.CreateClient();
-    }
+public class BasicIntegrationTests(WebApplicationFactory<Program> factory)
+    : IClassFixture<WebApplicationFactory<Program>> {
+    private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
     public async Task Get_EndpointReturnsSuccessAndCorrectContentType()
@@ -42,7 +35,5 @@ public class BasicIntegrationTests : IClassFixture<WebApplicationFactory<Program
         Assert.Equal(HttpStatusCode.InternalServerError, response3.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, response4.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, response5.StatusCode);
-        // Assert.Equal("application/json; charset=utf-8", 
-        //     response.Content.Headers.ContentType.ToString());
     }
 }
