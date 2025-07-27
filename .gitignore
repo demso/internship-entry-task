@@ -3,5 +3,7 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-/TickTackToe.Api/Game.db
+/TickTackToe.Api/*.db
+/TickTackToe.Api/*.db-shm
+/TickTackToe.Api/*.db-wal
 .idea/
