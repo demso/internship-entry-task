@@ -1,5 +1,5 @@
 ﻿@gameId = 1
-//["X", "X", ""], ["O", "X", ""], ["O", "O", ""]
+
 ### Take move X
 PUT http://localhost:8080/games/{{gameId}}/move
 Content-Type: application/json
